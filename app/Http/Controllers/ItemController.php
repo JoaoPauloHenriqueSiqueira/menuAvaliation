@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemPostRequest;
 use App\Models\Company;
-use App\Models\Itens;
+use App\Models\Item;
 use App\Repositories\Contracts\ItemRepositoryContract;
 
 class ItemController extends Controller
@@ -22,10 +22,28 @@ class ItemController extends Controller
         return redirect('/item/' . $item->id);
     }
 
-    public function update(Itens $item)
+    public function update(Item $item)
     {
         $item = $this->repository->update(request()->all(), $item);
         return redirect('/item/' . $item->id);
+    }
+
+    public function destroy(Item $item)
+    {
+        try {
+            $this->validOwner($item);
+            $this->repository->delete($item);
+            return redirect('/items');
+        } catch (\Exception $e) {
+            return response([], 404);
+        }
+    }
+
+    private function validOwner(Item $item)
+    {
+        if ($item->company_id != auth()->user()->company_id) {
+            throw new \Exception();
+        }
     }
 
 

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Company;
-use App\Models\Itens;
+use App\Models\Item;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,8 +17,8 @@ class ItemManagementTest extends TestCase
     {
         $response = $this->actingAs($user = User::factory()->create())->post('/item', $this->data());
 
-        $item = Itens::first();
-        $this->assertCount(1, Itens::all());
+        $item = Item::first();
+        $this->assertCount(1, Item::all());
         $response->assertRedirect('/item/' . $item->id);
     }
 
@@ -46,14 +46,45 @@ class ItemManagementTest extends TestCase
     public function an_item_can_be_updated()
     {
         $this->actingAs($user = User::factory()->create())->post('/item', $this->data());
-        $item = Itens::first();
+        $item = Item::first();
 
-        $response = $this->patch('/item/'.$item->id,[
-            'price'=>'2.66'
+        $response = $this->patch('/item/' . $item->id, [
+            'price' => '2.66'
         ]);
 
-        $this->assertEquals('2.66', Itens::first()->price);
+        $this->assertEquals('2.66', Item::first()->price);
         $response->assertRedirect('/item/' . $item->id);
+    }
+
+
+    /** @test */
+    public function an_item_can_be_deleted()
+    {
+        $this->withoutExceptionHandling();
+        $this->actingAs($user = User::factory()->create())->post('/item', $this->data());
+
+        $item = Item::first();
+
+        $response = $this->delete('/item/' . $item->id);
+
+        $this->assertCount(0, Item::all());
+        $response->assertRedirect('/items');
+    }
+
+    /** @test */
+    public function an_item_other_company_cant_be_deleted()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $this->actingAs($user1)->post('/item', $this->data());
+
+        $item = Item::first();
+
+        $response = $this->actingAs($user2)->delete('/item/' . $item->id);
+
+        $this->assertCount(1, Item::all());
+        $response->assertStatus(404);
     }
 
     /**
