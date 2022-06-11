@@ -18,9 +18,15 @@ class ItemController extends Controller
 
     public function store(ItemPostRequest $request)
     {
-        $validated = $request->validated();
-        $item = $this->repository->create($validated);
+        $item = $this->repository->create($request->validated());
         return redirect('/item/' . $item->id);
     }
+
+    public function update(Itens $item)
+    {
+        $item = $this->repository->update(request()->all(), $item);
+        return redirect('/item/' . $item->id);
+    }
+
 
 }

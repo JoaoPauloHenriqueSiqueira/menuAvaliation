@@ -18,3 +18,4 @@ Route::get('/', function () {
 });
 
 Route::post('/item', [\App\Http\Controllers\ItemController::class, 'store']);
+Route::patch('/item/{item}', [\App\Http\Controllers\ItemController::class, 'update']);

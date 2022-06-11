@@ -8,14 +8,13 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ItemTest extends TestCase
+class ItemManagementTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
     public function an_item_can_added_to_a_company()
     {
-        $this->withoutExceptionHandling();
         $response = $this->actingAs($user = User::factory()->create())->post('/item', $this->data());
 
         $item = Itens::first();
@@ -31,6 +30,30 @@ class ItemTest extends TestCase
         );
 
         $response->assertSessionHasErrors('name');
+    }
+
+    /** @test */
+    public function a_price_is_required()
+    {
+        $response = $this->post('/item',
+            array_merge($this->data(), ['price' => ''])
+        );
+
+        $response->assertSessionHasErrors('price');
+    }
+
+    /** @test */
+    public function an_item_can_be_updated()
+    {
+        $this->actingAs($user = User::factory()->create())->post('/item', $this->data());
+        $item = Itens::first();
+
+        $response = $this->patch('/item/'.$item->id,[
+            'price'=>'2.66'
+        ]);
+
+        $this->assertEquals('2.66', Itens::first()->price);
+        $response->assertRedirect('/item/' . $item->id);
     }
 
     /**

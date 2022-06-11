@@ -12,4 +12,9 @@ class ItemRepository implements ItemRepositoryContract
         return Itens::create($data);
     }
 
+    public function update($request, Itens $item)
+    {
+        $item->update($request);
+        return $item;
+    }
 }
