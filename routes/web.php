@@ -20,3 +20,7 @@ Route::get('/', function () {
 Route::post('/item', [\App\Http\Controllers\ItemController::class, 'store']);
 Route::patch('/item/{item}', [\App\Http\Controllers\ItemController::class, 'update']);
 Route::delete('/item/{item}', [\App\Http\Controllers\ItemController::class, 'destroy']);
+
+
+Route::get('upload', '\App\Http\Controllers\FileController@index');
+Route::post('store', '\App\Http\Controllers\FileController@store');

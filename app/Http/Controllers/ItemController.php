@@ -19,6 +19,16 @@ class ItemController extends Controller
     public function store(ItemPostRequest $request)
     {
         $item = $this->repository->create($request->validated());
+
+        $file = $request->file('image');
+
+        $companyId = Auth::user()->company_id;
+        $path = "image/company/$companyId/item/$item->id";
+
+        if($file){
+            $pathPhoto = $this->uploadPlugin->upload($item, $path);
+        }
+
         return redirect('/item/' . $item->id);
     }
 

@@ -26,7 +26,8 @@ class ItemPostRequest extends FormRequest
         return [
             'name' => 'required|min:2|max:155',
             'description' => 'max:300',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
+            'file' => 'mimes:jpeg,jpg,gif,png'
         ];
     }
 }
